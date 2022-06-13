@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.common;
 public class CommonLogic extends Object {
 
     //*********************************************************************************************
-    public static double CapMotorPower(double MotorPower, double negCapValue, double posCapValue) {
+    public static double CapValue(double TargetValue, double negCapValue, double posCapValue) {
         // logic to cap the motor power between a good range
-        double retValue = MotorPower;
+        double retValue = TargetValue;
 
-        if (MotorPower < negCapValue) {
+        if (TargetValue < negCapValue) {
             retValue = negCapValue;
         }
 
-        if (MotorPower > posCapValue) {
+        if (TargetValue > posCapValue) {
             retValue = posCapValue;
         }
 
