@@ -108,8 +108,9 @@ public class Tele_Op extends OpMode {
         write2Log();
 
         //***********   Gamepad 1 controls ********
-        robot.driveTrain.cmdTeleOp(CommonLogic.joyStickMath(-gamepad1.left_stick_y),
-                CommonLogic.joyStickMath(-gamepad1.right_stick_y));
+        robot.driveTrain.cmdTeleOp(CommonLogic.joyStickMath(gamepad1.left_stick_y),
+                CommonLogic.joyStickMath(gamepad1.left_stick_x),
+                CommonLogic.joyStickMath(gamepad1.right_stick_x);
 
 
         //***********   Pushers

@@ -12,10 +12,10 @@ public class DriveTrain extends BaseHardware {
 
     //for truning this is the tolerance of trun in degrees
     public static final int DRIVETRAIN_GyroHeadingTol = 3;
-    public static final int DRIVETRAIN_ticsPerRev = Settings.REV_HD_40_MOTOR_TICKS_PER_REV;
+    public static final int DRIVETRAIN_ticsPerRev = Settings.REV_HD_20_MOTOR_TICKS_PER_REV
     public static final double DRIVETRAIN_wheelDistPerRev = 4 * 3.14159;
 
-    public static final double DRIVETRAIN_gearRatio = 40.0 / 40.0;
+    public static final double DRIVETRAIN_gearRatio = 20.0 / 20.0;
     public static final double DRIVETRAIN_ticsPerInch = DRIVETRAIN_ticsPerRev / DRIVETRAIN_wheelDistPerRev / DRIVETRAIN_gearRatio;
     public static final double DRIVETRAIN_DriveTolerInches = .25;
     public static final double DRIVETRAIN_TURBOSPEED = 1.0;
@@ -38,12 +38,15 @@ public class DriveTrain extends BaseHardware {
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
-    private double TargetMotorPowerLeft = 0.0;
-    private double TargetMotorPowerRight = 0.0;
+    private double LDM1Power = 0.0;
+    private double LDM2Power = 0.0;
+    private double RDM1Power = 0.0;
+    private double RDM2Power = 0.0;
     private int TargetHeadingDeg = 0;
     private double TargetDistanceInches = 0.0;
     private double maxPower = 1.0;
     private double minPower = -1.0;
+
 
     //*********************************************************************************************
     /*
@@ -193,23 +196,30 @@ public class DriveTrain extends BaseHardware {
     //*********************************************************************************************
     public void doTeleop() {
         drivetrain_mode_Current = Mode.TELEOP;
-
         //Cap the power limit for the wheels
-       double lPower = CommonLogic.CapValue(TargetMotorPowerLeft,
+       double LDM1P = CommonLogic.CapValue(LDM1Power,
                 minPower, maxPower);
 
         //Cap the power limit for the wheels
-        double rPower = CommonLogic.CapValue(TargetMotorPowerRight,
+        double LDM2P = CommonLogic.CapValue(LDM2Power,
+                minPower, maxPower);
+
+        double RDM1P = CommonLogic.CapValue(RDM1Power,
+                minPower, maxPower);
+
+        double RDM2P = CommonLogic.CapValue(RDM2Power,
                 minPower, maxPower);
 
 
-        LDM1.setPower(lPower);
-        RDM1.setPower(rPower);
-        LDM2.setPower(lPower);
-        RDM2.setPower(rPower);
-        RobotLog.aa(TAGChassis, "doTeleop: lPower=" + lPower + " rPower=" + rPower);
+
+
+        LDM1.setPower(LDM1P);
+        RDM1.setPower(RDM1P);
+        LDM2.setPower(LDM2P);
+        RDM2.setPower(RDM2P);
+        RobotLog.aa(TAGChassis, "doTeleop: LDM1Power =" + LDM1P + " RDM1Power =" + RDM1P +
+                        " LDM2Power =" + LDM2P + " RDM2Power =" + RDM2P);
     }
-
     //*********************************************************************************************
     private void doStopped() {
         // This is different because here we are only stopping the drive wheels not ending the
@@ -218,14 +228,17 @@ public class DriveTrain extends BaseHardware {
 
         // only make the trip out to the motors once.
         // on repeat trips don't bother with the trip out to the hardware
-        if ((Math.abs(TargetMotorPowerLeft) + Math.abs(TargetMotorPowerRight)) != 0.0) {
-            TargetMotorPowerLeft = 0.0;
-            TargetMotorPowerRight = 0.0;
+        if ((Math.abs(LDM1Power) + Math.abs(LDM2Power) + Math.abs(RDM1Power) + Math.abs(RDM2Power)) != 0.0) {
+            LDM1Power = 0.0;
+            LDM2Power = 0.0;
+            RDM1Power = 0.0;
+            RDM2Power = 0.0;
+
             TargetDistanceInches = 0.0;
-            LDM1.setPower(TargetMotorPowerLeft);
-            LDM2.setPower(TargetMotorPowerLeft);
-            RDM1.setPower(TargetMotorPowerRight);
-            RDM2.setPower(TargetMotorPowerRight);
+            LDM1.setPower(LDM1Power);
+            LDM2.setPower(LDM2Power);
+            RDM1.setPower(RDM1Power);
+            RDM2.setPower(RDM2Power);
             drivetrain_mode_Current = Mode.STOPPED;
         }
     }
@@ -332,11 +345,35 @@ public class DriveTrain extends BaseHardware {
         doTurn();
     }
 
-    public void cmdTeleOp(double lSpeed, double rSpeed) {
+    public void cmdTeleOp(double Left_Y, double Left_X, double Right_X) {
         cmdComplete = false;
         drivetrain_mode_Current = Mode.TELEOP;
-        TargetMotorPowerLeft = lSpeed;
-        TargetMotorPowerRight = rSpeed;
+       double Direction = Math.atan2(Left_Y, Left_X);
+       double Magnitude = Math.sqrt( Left_X * Left_X + Left_Y * Left_Y );
+       double Turn = Right_X;
+        //The front-right and back-left wheel should be set to sin(angle−1/4π) * magnitude.
+        //The front-left and back-right wheel should be set to sin(angle+1/4π) * magnitude.
+        // https://seamonsters-2605.github.io/archive/mecanum/
+       double Plus = Math.sin(Direction+(1/4 * Math.PI)) * Magnitude;
+       double Minus = Math.sin(Direction-(1/4 * Math.PI)) * Magnitude;
+       if (Math.abs(Plus) >= Math.abs(Minus)){
+           LDM1Power = (Plus + Turn) / Math.abs(Plus);
+           LDM2Power = (Minus + Turn) / Math.abs(Plus);
+           RDM1Power = (-Minus + Turn) / Math.abs(Plus);
+           RDM2Power = (-Plus + Turn) / Math.abs(Plus);
+       }
+       else {
+           LDM1Power = (Plus + Turn) / Math.abs(Minus);
+           LDM2Power = (Minus + Turn) / Math.abs(Minus);
+           RDM1Power = (-Minus + Turn) / Math.abs(Minus);
+           RDM2Power = (-Plus + Turn) / Math.abs(Minus);
+       }
+
+
+
+
+
+
         doTeleop();
     }
 
