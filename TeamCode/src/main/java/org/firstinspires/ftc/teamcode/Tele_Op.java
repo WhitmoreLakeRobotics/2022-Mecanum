@@ -110,18 +110,16 @@ public class Tele_Op extends OpMode {
         //***********   Gamepad 1 controls ********
         robot.driveTrain.cmdTeleOp(CommonLogic.joyStickMath(gamepad1.left_stick_y),
                 CommonLogic.joyStickMath(gamepad1.left_stick_x),
-                CommonLogic.joyStickMath(gamepad1.right_stick_x);
+                CommonLogic.joyStickMath(gamepad1.right_stick_x));
 
 
         //***********   Pushers
         if (CommonLogic.oneShot(gamepad1.a, gp1_prev_a)) {
             //robot.subPushers.cmdMoveAllDown();
-            robot.carousel.cmdCarouselRun_RED();
         }
 
         if (CommonLogic.oneShot(gamepad1.b, gp1_prev_b)) {
             //robot.subPushers.cmdMoveAllUp();
-            robot.carousel.cmdCarouselSTOPPED();
         }
 
         // Bumpers high and lower Powers for the wheels,
@@ -129,14 +127,9 @@ public class Tele_Op extends OpMode {
             robot.driveTrain.setMaxPower(DriveTrain.DRIVETRAIN_SLOWSPEED);
         }*/
         if ((gamepad1.left_trigger > .6) && (gamepad1.right_trigger < .6)) {
-            robot.driveTrain.setMaxPower(DriveTrain.DRIVETRAIN_SLOWSPEED);
-            RobotLog.aa(TAGTeleop, "GamepadLB: " + gamepad1.left_bumper);
-            telemetry.addData (TAGTeleop, "GamepadLB: " + gamepad1.left_bumper);
+
         } else if((gamepad1.left_trigger < .6) && (gamepad1.right_trigger > .6))
         {
-            robot.driveTrain.setMaxPower(DriveTrain.DRIVETRAIN_TURBOSPEED);
-            RobotLog.aa(TAGTeleop,"GamepadRB: " + gamepad1.right_bumper);
-            telemetry.addData (TAGTeleop, "GamepadRB: " + gamepad1.right_bumper);
 
         }else {
             robot.driveTrain.setMaxPower(DriveTrain.DRIVETRAIN_NORMALSPEED);
@@ -173,9 +166,7 @@ public class Tele_Op extends OpMode {
             //if (robot.subGrabbers.getIsDownLeft()) {
             //    robot.subGrabbers.cmdMoveUpLeft();
             //}
-            robot.carousel.cmdCarouselSTOPPED();
-            robot.delivery.cmdDeliveryRun_STOP();
-        }
+           }
 
         if (CommonLogic.oneShot(gamepad1.dpad_down, gp1_prev_dpad_down)) {
             //if (robot.subGrabbers.getIsUpLeft()) {
@@ -190,7 +181,6 @@ public class Tele_Op extends OpMode {
             //if (robot.subGripper.getIsOpen()) {
             //    robot.subGripper.cmd_close();
             //}
-            robot.carousel.cmdCarouselRun_RED();
 
             RobotLog.aa(TAGTeleop, " gp2_prev_left_bumper : " + gp2_prev_left_bumper);
 
@@ -204,33 +194,23 @@ public class Tele_Op extends OpMode {
             //    robot.subGripper.cmd_open();
             // }
 
-            if (robot.sweeper.cmdCurrentMode() == "STOPPED"){
-                robot.sweeper.cmdSweeperRun();
-            }
-            else {
-                robot.sweeper.cmdSweeperSTOPPED();
-            }
         }
 
 
         if (CommonLogic.oneShot(gamepad2.a, gp2_prev_a)) {
             //robot.subExtender.decPositionIndex();
-           robot.delivery.cmdDeliveryRun_RECEIVE();
         }
 
         if (CommonLogic.oneShot(gamepad2.b, gp2_prev_b)) {
             //robot.subLeg.pick();
-            robot.delivery.cmdDeliveryRun_TSHARED_LOW();
         }
 
         if (CommonLogic.oneShot(gamepad2.y, gp2_prev_y)) {
             //robot.subExtender.incPositionIndex();
-            robot.delivery.cmdDeliveryRun_HIGH();
         }
 
         if (CommonLogic.oneShot(gamepad2.x, gp2_prev_x)) {
             //robot.subLeg.place();
-            robot.delivery.cmdDeliveryRun_TSHARED_HIGH();
         }
 
         if (Math.abs(gamepad2.left_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
@@ -238,7 +218,6 @@ public class Tele_Op extends OpMode {
             //robot.capper.cmdTeleOp((gamepad2.left_stick_y * 0.5) + (gamepad2.right_stick_y * 0.5));
 
         }
-        robot.capper.cmdTeleOp(gamepad2.left_stick_y);
         if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
             //robot.subLifter.stickControl(-gamepad2.left_stick_y);
             //robot.capper.cmdTeleOp(gamepad2.right_stick_y * .5);
@@ -246,36 +225,27 @@ public class Tele_Op extends OpMode {
 
         if (CommonLogic.oneShot(gamepad2.dpad_up, gp2_prev_dpad_up)) {
             //robot.subLifter.incPositionIndex();
-            robot.capper.cmdpark();
         }
 
         if (CommonLogic.oneShot(gamepad2.dpad_down, gp2_prev_dpad_down)) {
             //robot.subLifter.decPositionIndex();
-            robot.capper.cmdCollect();
         }
         if (CommonLogic.oneShot(gamepad2.dpad_right, gp2_prev_dpad_right)) {
             //robot.subLifter.decPositionIndex();
-            robot.sweeper.cmdSweeperSTOPPED();
-            robot.delivery.cmdDeliveryRun_CARRY();
         }
 
         if (CommonLogic.oneShot(gamepad2.dpad_left, gp2_prev_dpad_left)) {
             //robot.subLifter.decPositionIndex();
-            robot.carousel.cmdCarouselRun_RED();
         }
 
         if (gamepad2.right_trigger > .8){
-            robot.delivery.cmdDeliveryRun_DROP();
         }
         if ((gamepad2.right_trigger < .79) && (gamepad2.right_trigger > .01)){
-            robot.delivery.cmdDeliveryRun_CLOSE();
            // robot.cmdReturnTo_Carry();
         }
         if (gamepad2.left_trigger > .8) {
-            robot.capper.cmdPlungerRelease();
         }
         if ((gamepad2.left_trigger < .79) && (gamepad2.left_trigger > .01)) {
-            robot.capper.cmdPlungerGrab();
         }
 
         // Update the previous status for gamepad1

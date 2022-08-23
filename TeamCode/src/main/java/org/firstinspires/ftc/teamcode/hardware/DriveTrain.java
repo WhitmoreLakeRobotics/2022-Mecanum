@@ -12,15 +12,15 @@ public class DriveTrain extends BaseHardware {
 
     //for truning this is the tolerance of trun in degrees
     public static final int DRIVETRAIN_GyroHeadingTol = 3;
-    public static final int DRIVETRAIN_ticsPerRev = Settings.REV_HD_20_MOTOR_TICKS_PER_REV
+    public static final int DRIVETRAIN_ticsPerRev = Settings.REV_HD_20_MOTOR_TICKS_PER_REV;
     public static final double DRIVETRAIN_wheelDistPerRev = 4 * 3.14159;
 
     public static final double DRIVETRAIN_gearRatio = 20.0 / 20.0;
     public static final double DRIVETRAIN_ticsPerInch = DRIVETRAIN_ticsPerRev / DRIVETRAIN_wheelDistPerRev / DRIVETRAIN_gearRatio;
     public static final double DRIVETRAIN_DriveTolerInches = .25;
-    public static final double DRIVETRAIN_TURBOSPEED = 1.0;
     public static final double DRIVETRAIN_NORMALSPEED = .75;
-    public static final double DRIVETRAIN_SLOWSPEED = .25;
+    public static final double DRIVEIVETRAIN_TURBOSPEED = 1.0;
+    public static final double DRTRAIN_SLOWSPEED = .25;
     public static final double DRIVETRAIN_TURNSPEED = .4;
 
     // naj set constant for Gyro KP for driving straight
@@ -74,10 +74,10 @@ public class DriveTrain extends BaseHardware {
         }
 
 
-        LDM1.setDirection(DcMotor.Direction.FORWARD);
+        LDM1.setDirection(DcMotor.Direction.REVERSE);
         LDM2.setDirection(DcMotor.Direction.FORWARD);
-        RDM1.setDirection(DcMotor.Direction.REVERSE);
-        RDM2.setDirection(DcMotor.Direction.REVERSE);
+        RDM1.setDirection(DcMotor.Direction.FORWARD);
+        RDM2.setDirection(DcMotor.Direction.FORWARD);
 
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -244,14 +244,14 @@ public class DriveTrain extends BaseHardware {
     }
     //*********************************************************************************************
     private void doDrive() {
-
+/*
         // insert adjustments to drive straight using gyro
         RobotLog.aa(TAGChassis, "curr heading: " + subGyro.gyroNormalize(subGyro.getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
         double delta = -subGyro.deltaHeading(subGyro.gyroNormalize(subGyro.getGyroHeading()), TargetHeadingDeg);
-        double leftPower = TargetMotorPowerLeft - (delta * chassis_KPGyroStraight);
-        double rightPower = TargetMotorPowerRight + (delta * chassis_KPGyroStraight);
+        //double leftPower = TargetMotorPowerLeft - (delta * chassis_KPGyroStraight);
+        //double rightPower = TargetMotorPowerRight + (delta * chassis_KPGyroStraight);
 
 
         leftPower = CommonLogic.CapValue(leftPower,
@@ -280,6 +280,8 @@ public class DriveTrain extends BaseHardware {
             doStopped();
         }
 
+
+ */
     }    // doDrive()
 
     //*********************************************************************************************
@@ -310,7 +312,7 @@ public class DriveTrain extends BaseHardware {
     //*********************************************************************************************
     // create command to be called from auton to drive straight
     public void cmdDriveByGyro(double DrivePower, int headingDeg, double targetDistanceInches) {
-
+/*
         cmdComplete = false;
         if (drivetrain_mode_Current != Mode.DRIVE_BY_GYRO) {
             drivetrain_mode_Current = Mode.DRIVE_BY_GYRO;
@@ -323,6 +325,8 @@ public class DriveTrain extends BaseHardware {
         DriveMotorEncoderReset();
         drivetrain_mode_Current = Mode.DRIVE_BY_GYRO;
         //doDrive();
+
+ */
     }
 
     //*********************************************************************************************
