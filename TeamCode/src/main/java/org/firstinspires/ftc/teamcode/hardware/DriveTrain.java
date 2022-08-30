@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -74,7 +75,7 @@ public class DriveTrain extends BaseHardware {
         }
 
 
-        LDM1.setDirection(DcMotor.Direction.REVERSE);
+        LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM2.setDirection(DcMotor.Direction.FORWARD);
         RDM1.setDirection(DcMotor.Direction.FORWARD);
         RDM2.setDirection(DcMotor.Direction.FORWARD);
@@ -352,7 +353,7 @@ public class DriveTrain extends BaseHardware {
     public void cmdTeleOp(double Left_Y, double Left_X, double Right_X) {
         cmdComplete = false;
         drivetrain_mode_Current = Mode.TELEOP;
-       double Direction = Math.atan2(Left_Y, Left_X);
+       double Direction = Math.atan2(Left_X, Left_Y);
        double Magnitude = Math.sqrt( Left_X * Left_X + Left_Y * Left_Y );
        double Turn = Right_X;
         //The front-right and back-left wheel should be set to sin(angle−1/4π) * magnitude.
@@ -360,19 +361,25 @@ public class DriveTrain extends BaseHardware {
         // https://seamonsters-2605.github.io/archive/mecanum/
        double Plus = Math.sin(Direction+(1/4 * Math.PI)) * Magnitude;
        double Minus = Math.sin(Direction-(1/4 * Math.PI)) * Magnitude;
+        RobotLog.aa(TAGChassis, " Plus: " + Plus + " Minus: " + Minus + " Magnitude: " + Magnitude
+        + " Direction: " + Direction);
        if (Math.abs(Plus) >= Math.abs(Minus)){
            LDM1Power = (Plus + Turn) / Math.abs(Plus);
-           LDM2Power = (Minus + Turn) / Math.abs(Plus);
-           RDM1Power = (-Minus + Turn) / Math.abs(Plus);
-           RDM2Power = (-Plus + Turn) / Math.abs(Plus);
+           //RDM1Power = (-Minus + Turn) / Math.abs(Plus);
+          LDM2Power = (Minus + Turn) / Math.abs(Plus);
+           //RDM2Power = (-Plus + Turn) / Math.abs(Plus);
        }
        else {
            LDM1Power = (Plus + Turn) / Math.abs(Minus);
+           //RDM1Power = (-Minus + Turn) / Math.abs(Minus);
            LDM2Power = (Minus + Turn) / Math.abs(Minus);
-           RDM1Power = (-Minus + Turn) / Math.abs(Minus);
-           RDM2Power = (-Plus + Turn) / Math.abs(Minus);
+           //RDM2Power = (-Plus + Turn) / Math.abs(Minus);
        }
 
+        RobotLog.aa(TAGChassis, "LDM1Power: " + LDM1Power +" LDM2Power: " + LDM2Power
+                + " RDM1Power: " + RDM1Power +" RDM2Power: " + RDM2Power);
+        RobotLog.aa(TAGChassis, "Left_X: " + Left_X +" Left_Y: " + Left_Y
+                + " Right_X: " + Right_X );
 
 
 
